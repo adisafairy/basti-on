@@ -1,4 +1,4 @@
-# AGENTS.md — context for AI agents working in this repo
+# AGENTS.md — context for AI agents working in this repo (project: Basti-on)
 
 This file is read automatically by AI coding agents (e.g. in Orca). It records what
 this project is and the rules to keep, so a fresh agent doesn't start from zero.

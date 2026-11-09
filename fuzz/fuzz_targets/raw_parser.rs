@@ -11,5 +11,5 @@
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
-    let _ = airlock::parse_unguarded(data);
+    let _ = bastion::parse_unguarded(data);
 });

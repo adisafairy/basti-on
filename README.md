@@ -1,6 +1,11 @@
-# rust-airlock
+# Basti-on
 
-A memory-safe **Rust airlock** in front of a memory-unsafe **C++** parser.
+**Always on, standing guard.** A memory-safe **Rust airlock** in front of a
+memory-unsafe **C++** parser.
+
+Basti-on is the bastion at the boundary: untrusted packets hit the Rust guard
+first, and only the ones it proves well-formed are let through to the C++ engine
+behind it.
 
 The C++ side is a small DNS message parser that follows label lengths and
 compression pointers **without bounds checks** — a real, documented bug class

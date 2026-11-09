@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "rust-airlock/src/lib.rs.h"  // cxx-generated: dnsparser::Message, Question
+#include "basti-on/src/lib.rs.h"  // cxx-generated: dnsparser::Message, Question
 
 #include <cstdint>
 

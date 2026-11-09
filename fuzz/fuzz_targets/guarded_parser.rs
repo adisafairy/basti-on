@@ -14,5 +14,5 @@ use libfuzzer_sys::fuzz_target;
 fuzz_target!(|data: &[u8]| {
     // Only well-formed packets reach C++. If this ever crashes, the airlock
     // accepted something it should have rejected.
-    let _ = airlock::parse_guarded(data);
+    let _ = bastion::parse_guarded(data);
 });

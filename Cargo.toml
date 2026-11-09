@@ -1,12 +1,12 @@
 [package]
-name = "rust-airlock"
+name = "basti-on"
 version = "0.1.0"
 edition = "2021"
-description = "A Rust validation airlock in front of a memory-unsafe C++ DNS parser"
+description = "Basti-on: a Rust validation airlock that stands guard in front of a memory-unsafe C++ DNS parser"
 license = "MIT"
 
 [lib]
-name = "airlock"
+name = "bastion"
 crate-type = ["lib", "staticlib"]
 
 [dependencies]

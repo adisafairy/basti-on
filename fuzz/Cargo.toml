@@ -1,5 +1,5 @@
 [package]
-name = "rust-airlock-fuzz"
+name = "basti-on-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
@@ -10,7 +10,8 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 
-[dependencies.airlock]
+[dependencies.bastion]
+package = "basti-on"
 path = ".."
 
 # Each target below is built by `cargo fuzz run <name>`.

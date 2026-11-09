@@ -67,4 +67,4 @@ There are convenience wrappers: `scripts/run_fuzz.sh raw 60`,
   `CXX=g++ scripts/run_asan_demo.sh`, or install the clang runtime package.
 - **`cargo fuzz` says nightly is required** — `rustup toolchain install nightly`.
 - **cxx build errors after editing `src/lib.rs`** — the bridge header includes
-  the generated `lib.rs.h`; run `cargo clean -p rust-airlock` and rebuild.
+  the generated `lib.rs.h`; run `cargo clean -p basti-on` and rebuild.

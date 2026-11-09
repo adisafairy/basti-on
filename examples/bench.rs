@@ -14,7 +14,7 @@
 
 use std::time::Instant;
 
-use airlock::{parse_guarded, parse_unguarded};
+use bastion::{parse_guarded, parse_unguarded};
 
 fn valid_packets() -> Vec<Vec<u8>> {
     let names: &[&[&str]] = &[

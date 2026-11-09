@@ -7,7 +7,7 @@
 //! sanitizer. The matching crashes on the unguarded path are shown by the ASan
 //! demo (`scripts/run_asan_demo.sh`).
 
-use airlock::{parse_guarded, validate};
+use bastion::{parse_guarded, validate};
 
 fn header(qdcount: u16) -> Vec<u8> {
     let mut h = vec![0u8; 12];

@@ -1,4 +1,4 @@
-//! # rust-airlock
+//! # Basti-on
 //!
 //! A small, self-contained demonstration of the **airlock pattern**: put a
 //! memory-safe Rust validator in front of a memory-unsafe C++ parser, so the
@@ -41,7 +41,7 @@ mod ffi {
     }
 
     unsafe extern "C++" {
-        include!("rust-airlock/cpp/include/dns_parser_bridge.h");
+        include!("basti-on/cpp/include/dns_parser_bridge.h");
 
         // Calls into the unsafe C++ parser. `data` is a DNS message.
         fn parse_message_ffi(data: &[u8]) -> Message;

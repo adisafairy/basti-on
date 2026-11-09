@@ -17,7 +17,7 @@
 use std::io::Write;
 use std::process::{Command, Stdio};
 
-use airlock::validate;
+use bastion::validate;
 
 // A tiny xorshift RNG so the run is deterministic from a seed and needs no deps.
 struct Rng(u64);
