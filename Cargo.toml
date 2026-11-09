@@ -1,0 +1,22 @@
+[package]
+name = "rust-airlock"
+version = "0.1.0"
+edition = "2021"
+description = "A Rust validation airlock in front of a memory-unsafe C++ DNS parser"
+license = "MIT"
+
+[lib]
+name = "airlock"
+crate-type = ["lib", "staticlib"]
+
+[dependencies]
+cxx = "1.0"
+
+[build-dependencies]
+cxx-build = "1.0"
+
+[dev-dependencies]
+# nothing yet; fuzzing lives in the fuzz/ sub-crate
+
+[profile.release]
+debug = true  # keep symbols so fuzzer/benchmark stack traces are readable

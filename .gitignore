@@ -1,0 +1,14 @@
+# Rust
+/target
+**/target
+Cargo.lock
+# cargo-fuzz
+/fuzz/target
+/fuzz/corpus
+/fuzz/artifacts
+/fuzz/Cargo.lock
+# build/test scratch
+*.o
+*.obj
+/tmp
+.DS_Store

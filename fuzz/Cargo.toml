@@ -1,0 +1,40 @@
+[package]
+name = "rust-airlock-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.airlock]
+path = ".."
+
+# Each target below is built by `cargo fuzz run <name>`.
+# IMPORTANT: build the C++ side with ASan so over-reads become crashes. The
+# fuzz/build.rs reads AIRLOCK_ASAN, and cargo-fuzz passes -fsanitize=address to
+# the whole link, so set it:  AIRLOCK_ASAN=1 cargo fuzz run raw_parser
+
+[[bin]]
+name = "raw_parser"
+path = "fuzz_targets/raw_parser.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "guarded_parser"
+path = "fuzz_targets/guarded_parser.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "validator_never_panics"
+path = "fuzz_targets/validator_never_panics.rs"
+test = false
+doc = false
+bench = false
