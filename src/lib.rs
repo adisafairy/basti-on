@@ -190,6 +190,17 @@ mod tests {
     }
 
     #[test]
+    fn accepts_non_utf8_label_without_aborting() {
+        // Well-formed, so the airlock accepts it, but the label byte 0xff is
+        // not UTF-8. This used to abort the process in the C++ -> Rust bridge.
+        let mut m = vec![0x12, 0x34, 0x01, 0x00, 0x00, 0x01, 0, 0, 0, 0, 0, 0];
+        m.extend_from_slice(&[1, 0xff, 0, 0x00, 0x01, 0x00, 0x01]);
+        assert!(validate(&m).is_ok());
+        let parsed = parse_guarded(&m).expect("should parse");
+        assert_eq!(parsed.questions[0].qname, "\u{FFFD}");
+    }
+
+    #[test]
     fn rejects_short() {
         assert_eq!(validate(&[0u8; 5]), Err(RejectReason::TooShort));
     }

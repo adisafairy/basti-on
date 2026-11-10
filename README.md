@@ -3,6 +3,11 @@
 **Always on, standing guard.** A memory-safe **Rust airlock** in front of a
 memory-unsafe **C++** parser.
 
+**Live demo: [basti-on.vercel.app](https://basti-on.vercel.app)**. Packet Lab
+shows the airlock under live traffic, takes packets apart byte by byte, replays a
+real DNS guard run, and checks itself against 2,000 packets recorded from the
+real binaries. Its source is `site/index.html`.
+
 Basti-on is the bastion at the boundary: untrusted packets hit the Rust guard
 first, and only the ones it proves well-formed are let through to the C++ engine
 behind it.
@@ -50,7 +55,32 @@ reproducible rather than asserted.
    is *faster*, because it rejects early and never enters C++. Run it on your own
    machine for a number you can cite.
 
+## Using it in real code: a DNS guard
+
+`examples/dns_guard.rs` is a small, working DNS forwarder built on the library.
+It listens for real DNS lookups, puts the airlock in front of every one, lets the
+C++ parser read the good ones (to apply a blocklist), and forwards them to a real
+resolver such as 1.1.1.1.
+
+```bash
+scripts/dns_guard_demo.sh               # real lookups + attack packets, airlock on
+scripts/dns_guard_demo.sh --no-airlock  # same traffic with the airlock off
+```
+
+With the airlock on, real lookups are answered and the attack packets get a
+FORMERR reply without reaching C++. With it off, the same packets reach the
+parser: in a sample run one 14-byte packet made it copy at least 500 bytes of
+heap memory into the logged name, including pieces of earlier lookups. The guard
+also rejects non-standard queries up front and forwards on a pool of 16 workers,
+so a silent upstream can't freeze it. See [docs/WRITEUP.md](docs/WRITEUP.md) for
+those runs, and for a crash in the C++ → Rust bridge that building the guard
+uncovered and that is now fixed.
+
 ## Quick start
+
+To check everything at once, run `scripts/check.sh`. It runs the unit tests,
+the ASan demo, a 2,000-packet differential fuzz and the DNS guard demo, and
+prints PASS or FAIL for each with the evidence. Or step by step:
 
 ```bash
 # 1. Build and unit-test (stable Rust + a C++ compiler is all you need)
@@ -67,6 +97,9 @@ scripts/differential_fuzz.sh 5000
 
 # 5. Measure the overhead
 cargo run --release --example bench
+
+# 6. Run it as a real DNS service (needs network access to 1.1.1.1)
+scripts/dns_guard_demo.sh
 ```
 
 For the full libFuzzer/`cargo-fuzz` setup (nightly toolchain), see
@@ -87,6 +120,7 @@ build.rs                          compiles the C++ via cxx-build
 examples/airlock_vs_raw.rs        the three-line demonstration
 examples/differential.rs          differential harness (airlock vs raw parser)
 examples/bench.rs                 throughput benchmark
+examples/dns_guard.rs             real DNS forwarder with the airlock in front
 fuzz/                             cargo-fuzz targets (raw / guarded / validator)
 scripts/                         one-command wrappers
 docs/                            SETUP and the interview write-up

@@ -63,6 +63,72 @@ memory-safe. It makes the bug **unreachable from malformed input**, which is the
 property that stops the attack. Saying that out loud is more convincing than
 overclaiming.
 
+### Using it in a real service: the DNS guard
+
+`examples/dns_guard.rs` is a small UDP DNS forwarder built on the library, the
+way production code would use it: every query goes through `validate()`, bad
+ones get a FORMERR reply and never reach C++, good ones are parsed by the C++
+parser via `parse_guarded()` (its result drives a blocklist) and forwarded to a
+real resolver. `scripts/dns_guard_demo.sh` sends it real lookups, the crafted
+packets and two non-standard queries. In one run on 10 Nov 2026 (WSL Ubuntu,
+upstream 1.1.1.1):
+
+- Real lookups for `example.com` and `github.com` were answered in about 5 ms,
+  and a blocklisted name got NXDOMAIN.
+- All five malformed packets were dropped by the airlock, and the guard kept
+  serving afterwards.
+- With `--no-airlock`, the same packets reached the C++ parser. This build has
+  no ASan, so nothing crashed, which is worse: the 14-byte "label runs off the
+  end" packet made the parser read on past the packet through leftover heap
+  memory and copy at least 500 bytes of it into the logged name, including
+  pieces of earlier lookups (`xampl..com`, `hub\3com` from the `github.com`
+  request) and what look like heap addresses. That is a Heartbleed-style memory
+  disclosure. The pointer loop made the parser follow the same pointer 32,768
+  times and build a 65,535-character name, and malformed packets were forwarded
+  upstream, where each one tied up a worker for 2 s and ended in SERVFAIL. The
+  amount leaked varies from run to run because it depends on what the heap held.
+
+### Trying to break it: a freeze the airlock can't stop
+
+Asked "what makes it fail?", two well-formed but non-standard queries did: a
+header with 0 questions, and a query with the QR (reply) bit set. Both pass the
+airlock, correctly, since they are memory-safe. But 1.1.1.1 ignores them, and the
+first version of the guard handled one query at a time with a 2 s upstream wait.
+Measured against that version, each got no reply and froze the guard for 2 s,
+so one such packet every 2 s would have kept it nearly unavailable. That is an
+availability bug, not a memory-safety one, so the fix lives in the guard rather
+than in `validate()`:
+
+- Queries that are not standard (no question or more than one, QR set, or an
+  unassigned opcode) get an immediate FORMERR or NOTIMP instead of being
+  forwarded. Both packets now get FORMERR in under 1 ms.
+- Forwarding runs on 16 worker threads behind a bounded queue (256). A silent
+  upstream ties up one worker, a full queue gets SERVFAIL at once, and an
+  upstream timeout answers SERVFAIL instead of leaving the client waiting. The
+  demo's freeze test points a guard at 192.0.2.1, which never answers, and sends
+  5 lookups at once: all 5 got SERVFAIL after 2.0 s, where one-at-a-time would
+  take about 10 s.
+
+The lesson: the airlock makes the parser unreachable by malformed input, but a
+service built on it still needs its own rules for availability.
+
+### A bug the differential fuzzer could not see
+
+Building the DNS guard turned up a crash outside the parser. A well-formed
+packet whose label holds a non-UTF-8 byte (for example `0xff`, which DNS allows)
+passes `validate()`, but the C++ → Rust bridge converted each name with
+`rust::String(std::string)`, which throws on invalid UTF-8. The exception
+crossed the FFI boundary and aborted the process: one 19-byte packet could take
+down a server. The differential harness feeds the C++ parser directly through
+`fuzz_one`, never through the bridge, so it could not observe this.
+
+The fix is in the bridge (`cpp/src/dns_parser_bridge.cc` now uses
+`rust::String::lossy`, replacing bad bytes with U+FFFD), with a regression test
+`accepts_non_utf8_label_without_aborting` in `src/lib.rs`. The parser itself and
+what the airlock accepts are unchanged. The lesson for the write-up: fuzz the
+path production actually takes, including the FFI layer, not just the unsafe
+component on its own.
+
 ## Is it scalable?
 
 Yes, in two senses.

@@ -24,7 +24,11 @@ Message parse_message_ffi(rust::Slice<const uint8_t> data) {
     out.arcount = native.arcount;
     for (const auto& q : native.questions) {
         Question bq;
-        bq.qname = rust::String(q.qname);
+        // DNS labels may hold any byte, so a well-formed name need not be
+        // UTF-8. rust::String(std::string) throws on invalid UTF-8, and that
+        // exception aborts the process at the FFI boundary; lossy() replaces
+        // bad bytes with U+FFFD instead.
+        bq.qname = rust::String::lossy(q.qname);
         bq.qtype = q.qtype;
         bq.qclass = q.qclass;
         out.questions.push_back(std::move(bq));

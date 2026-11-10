@@ -12,3 +12,4 @@ Cargo.lock
 *.obj
 /tmp
 .DS_Store
+.vercel
