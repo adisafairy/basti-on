@@ -703,6 +703,58 @@ footer.foot .logo { font-size: 15px; }
   .boot.out .boot-hole { width: 160vmax; height: 160vmax; border-radius: 40px; transition: width .95s cubic-bezier(.7, 0, .2, 1) .15s, height .95s cubic-bezier(.7, 0, .2, 1) .15s, border-radius .95s ease .15s; }
 }
 @keyframes bootbar { 0% { transform: translateX(-110%); } 100% { transform: translateX(260%); } }
+
+/* ===== Build story slide-over ===== */
+.story-btn { min-height: 38px; padding: 0 12px; font: 600 14px/1 var(--f-body); }
+@media (max-width: 700px) { .story-btn span { display: none; } .story-btn { padding: 0 10px; } }
+.story { position: fixed; inset: 0; z-index: 60; display: grid; justify-items: end; }
+.story[hidden] { display: none !important; }
+.story-back { position: absolute; inset: 0; background: color-mix(in srgb, #02050a 55%, transparent); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.story-panel { position: relative; width: min(560px, 100%); height: 100%; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--bg); border-left: 1px solid var(--line); box-shadow: -30px 0 80px -30px #000c;
+  padding: calc(env(safe-area-inset-top, 0px) + 22px) 24px calc(env(safe-area-inset-bottom, 0px) + 32px); display: grid; gap: 22px; align-content: start; }
+@media (max-width: 600px) { .story-panel { border-left: 0; padding-inline: 18px; } }
+.story-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.story-head h2 { font: 600 clamp(24px, 4.4vw, 30px)/1.1 var(--f-display); letter-spacing: -0.035em; margin-top: 8px; outline: none; }
+.story-x { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.story-x svg { width: 18px; height: 18px; }
+.story-sec { display: grid; gap: 10px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--ink) 3%, var(--surface)); }
+.story-sec h3 { display: flex; align-items: center; gap: 10px; font: 600 16px/1.2 var(--f-display); letter-spacing: -0.01em; }
+.story-sec h3 i { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font: 700 13px/1 var(--f-mono); font-style: normal; color: #fff;
+  background: linear-gradient(180deg, #ffffff38, #0000002e), #2888ff; box-shadow: inset 0 0 0 1px #a7caff99; }
+.story-sec ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; font-size: 14.5px; line-height: 1.5; color: var(--muted); }
+.story-sec li b { color: var(--ink); font-weight: 600; }
+.story-sec code { font-size: 0.86em; color: var(--ink); }
+.story-tl { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.story-tl li { position: relative; display: grid; grid-template-columns: 74px 1fr; gap: 12px; padding: 0 0 16px; }
+.story-tl li::before { content: ""; position: absolute; left: 86px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+.story-tl li::after { content: ""; position: absolute; left: 90px; top: 18px; bottom: 0; width: 1px; background: var(--line); }
+.story-tl li:last-child::after { display: none; }
+.story-tl li.fix::before { background: var(--r-qtype); box-shadow: 0 0 0 4px color-mix(in srgb, var(--r-qtype) 18%, transparent); }
+.story-tl li.ship::before { background: var(--safe); box-shadow: 0 0 0 4px color-mix(in srgb, var(--safe) 18%, transparent); }
+.story-tl time { font: 600 12px/1.6 var(--f-mono); color: var(--muted); }
+.story-tl div { padding-left: 22px; font-size: 14px; line-height: 1.45; color: var(--muted); }
+.story-tl div b { display: block; color: var(--ink); font-weight: 600; font-size: 14.5px; margin-bottom: 2px; }
+.story-fb { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.story-fb li { display: grid; gap: 6px; padding: 12px 14px; border-radius: 10px; background: var(--sunken); border: 1px solid var(--line); }
+.story-fb q { font: 600 14px/1.35 var(--f-body); color: var(--ink); quotes: "“" "”"; }
+.story-fb p { font-size: 14px; line-height: 1.45; color: var(--muted); }
+.story-fb p::before { content: "→ "; color: var(--accent); font-weight: 700; }
+.story-fb .res { justify-self: start; font: 600 12px/1.3 var(--f-mono); color: var(--safe); background: var(--safe-soft); padding: 4px 8px; border-radius: 6px; }
+.story-foot { display: flex; flex-wrap: wrap; gap: 8px; }
+.story-foot a { min-height: 40px; padding: 0 14px; font: 600 14px/1 var(--f-body); }
+.story-note { font-size: 12.5px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .story.open .story-back { animation: storyfade .3s ease both; }
+  .story.open .story-panel { animation: storyin .45s cubic-bezier(.2, .8, .2, 1) both; }
+  .story.closing .story-back { animation: storyfade .22s ease reverse both; }
+  .story.closing .story-panel { animation: storyin .25s ease-in reverse both; }
+  .story.open .story-sec, .story.open .story-tl li { animation: rise .5s var(--ease-out) both; animation-delay: calc(.12s + var(--i, 0) * 55ms); }
+  @media (max-width: 600px) { .story.open .story-panel { animation-name: storyup; } .story.closing .story-panel { animation-name: storyup; } }
+}
+@keyframes storyfade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes storyin { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes storyup { from { transform: translateY(100%); } to { transform: none; } }
 </style>
 <script>
 try { const t = localStorage.getItem("packetlab-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -738,7 +790,7 @@ try { const t = localStorage.getItem("packetlab-theme"); if (t === "light" || t 
   <header class="bar-top">
     <a class="logo" href="#top" aria-label="Basti-on Packet Lab, back to top"><span class="mark" aria-hidden="true"></span>Basti-on</a>
     <nav class="navlinks" aria-label="Sections">
-      <a href="#modes" data-go="live">Live traffic</a><a href="#modes" data-go="lab">Packet lab</a><a href="#modes" data-go="guard">DNS guard</a><a href="#proof">Proof</a><a href="#faq">FAQ</a>
+      <a href="#modes" data-go="live">Live traffic</a><a href="#modes" data-go="lab">Packet lab</a><a href="#modes" data-go="guard">DNS guard</a><a href="#proof">Proof</a><a href="#story" data-story aria-haspopup="dialog">Story</a><a href="#faq">FAQ</a>
     </nav>
     <div class="bar-r">
       <div class="theme" role="group" aria-label="Theme">
@@ -747,6 +799,7 @@ try { const t = localStorage.getItem("packetlab-theme"); if (t === "light" || t 
         <button type="button" data-t="dark" aria-label="Dark theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><span>Dark</span></button>
       </div>
       <a class="ghost gh" aria-label="Basti-on source code on GitHub" href="https://github.com/adisafairy/basti-on" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg><span>GitHub</span></a>
+      <a class="ghost story-btn" href="#story" data-story aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg><span>Build story</span></a>
       <a class="bevel" href="#modes" data-go="challenges">Try a challenge</a>
     </div>
   </header>
@@ -758,7 +811,7 @@ try { const t = localStorage.getItem("packetlab-theme"); if (t === "light" || t 
       <h1 id="hero-h" style="--d:1">Malformed packets stop at the gate.</h1>
       <p class="sub" style="--d:2">A memory-safe Rust airlock sits in front of a C++ DNS parser with a real out-of-bounds read. Watch traffic hit it, switch it off, and take any packet apart byte by byte.</p>
       <div class="ctas" style="--d:3"><button type="button" class="bevel" data-go="live">Watch live traffic</button><button type="button" class="ghost" data-go="challenges">Try the challenges</button><a class="ghost" href="https://github.com/adisafairy/basti-on" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>View the code</a></div>
-      <span class="note-sm" style="--d:4">Runs in your browser · 0 of 585 real crashes got through</span>
+      <span class="note-sm" style="--d:4">Runs in your browser · 0 of 585 real crashes got through · <a href="#story" data-story aria-haspopup="dialog" style="color:inherit;text-underline-offset:3px">Read the build story →</a></span>
     </div>
   </section>
 
@@ -1001,6 +1054,76 @@ try { const t = localStorage.getItem("packetlab-theme"); if (t === "light" || t 
     <div class="ctas"><button type="button" class="bevel" data-go="challenges">Open the challenges</button><a class="ghost" href="https://github.com/adisafairy/basti-on" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>Get the code on GitHub</a></div>
     <div class="clone"><code id="clonecmd">git clone https://github.com/adisafairy/basti-on.git</code><button type="button" class="copy" id="copyclone">Copy</button></div>
   </section>
+
+  <div class="story" id="story" hidden>
+    <div class="story-back" data-story-close></div>
+    <section class="story-panel" role="dialog" aria-modal="true" aria-labelledby="story-h">
+      <div class="story-head">
+        <div><span class="kicker">Build story</span><h2 id="story-h" tabindex="-1">What I built, why it matters, what I learned</h2></div>
+        <button type="button" class="story-x" data-story-close aria-label="Close the build story"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+
+      <div class="story-sec" style="--i:0">
+        <h3><i>1</i>What I built</h3>
+        <ul>
+          <li><b>A Rust airlock</b> (<code>validate()</code>) in front of a C++ DNS parser that has a deliberate out-of-bounds read, the same bug class as libtins <code>compose_name</code>. Every label and compression pointer is bounds-checked before the C++ runs.</li>
+          <li><b>Proof, not claims:</b> an AddressSanitizer crash demo, a differential fuzzer, a benchmark, and <code>check.sh</code>, which runs them all and prints PASS or FAIL.</li>
+          <li><b>A real service on top:</b> a DNS forwarder that answers real lookups through 1.1.1.1 with the airlock in front.</li>
+          <li><b>This page:</b> a visual lab whose validator matches the Rust code on all 2,000 recorded packets.</li>
+        </ul>
+      </div>
+
+      <div class="story-sec" style="--i:1">
+        <h3><i>2</i>Why it matters</h3>
+        <ul>
+          <li><b>Memory-safety bugs in parsers of untrusted input are a classic way in for attackers,</b> and old C++ often can't simply be rewritten.</li>
+          <li><b>The airlock protects it without a rewrite:</b> 1,471 of 5,000 fuzzed packets crashed the parser on its own, and <b>0</b> got past the airlock.</li>
+          <li><b>The danger is real:</b> with the airlock off, one 14-byte packet made the DNS server copy 500+ bytes of its memory into the log, including pieces of other users' earlier lookups.</li>
+          <li><b>Honest limit:</b> the C++ is still unsafe code. The claim is that malformed input can't reach the bug.</li>
+        </ul>
+      </div>
+
+      <div class="story-sec" style="--i:2">
+        <h3><i>3</i>What I learned</h3>
+        <ul>
+          <li><b>Test the path production takes.</b> Fuzzing the parser alone missed a crash in the Rust ↔ C++ hand-off: one valid packet with a <code>0xff</code> byte aborted the whole server.</li>
+          <li><b>Memory safety isn't availability.</b> Well-formed but odd queries froze the server for 2 s each. The fix belonged in the service (guard rules and 16 workers), not the airlock.</li>
+          <li><b>Tools have blind spots.</b> ASan missed 20 of the over-reads in 2,000 packets because they landed in spare buffer memory.</li>
+          <li><b>Measure, don't guess.</b> Overhead came out between −5% and +13.5% across six runs, which is too noisy to quote as one number.</li>
+        </ul>
+      </div>
+
+      <div class="story-sec" style="--i:3">
+        <h3><i>4</i>Feedback I asked for, and what changed</h3>
+        <ul class="story-fb">
+          <li><q>What would make it fail?</q><p>Tried to break it on purpose. Found a crash in the Rust ↔ C++ hand-off and a 2 s freeze on odd queries, then fixed both.</p><span class="res">odd queries answered in &lt;1 ms · 5 stuck lookups answered together in 2.0 s</span></li>
+          <li><q>Can it be used in real code?</q><p>Built a working DNS server on the library instead of stopping at the demo.</p><span class="res">real lookups through 1.1.1.1 · every attack dropped</span></li>
+          <li><q>How do I show it's working?</q><p>Wrote <code>check.sh</code>: one command that runs every proof and prints PASS or FAIL with the evidence.</p><span class="res">4/4 PASS</span></li>
+          <li><q>Is it mobile friendly?</q><p>Measured every tab at three phone widths and fixed the two layouts that were wider than the screen.</p><span class="res">all tabs fit at 360, 390 and 414 px</span></li>
+          <li><q>The UI looks bad, and it's boring.</q><p>Rebuilt the page around the byte-by-byte view, then added live traffic, challenges and the DNS guard tab.</p></li>
+          <li><q>Why is the language bar 90% HTML?</q><p>Marked the bundled demo page as generated, so GitHub's stats reflect the Rust and C++ code.</p></li>
+        </ul>
+      </div>
+
+      <div style="display:grid;gap:12px">
+        <span class="kicker">Milestones</span>
+        <ol class="story-tl">
+          <li style="--i:4"><time>9 Nov</time><div><b>The airlock and the proofs</b>Rust validator, unsafe C++ parser, ASan demo, differential fuzzer.</div></li>
+          <li style="--i:5"><time>10 Nov</time><div><b>Reproduced on my own PC</b>5/5 tests, ASan caught both crafted packets, 5,000-packet fuzz: 1,471 crashed, 0 got past.</div></li>
+          <li style="--i:6"><time>10 Nov</time><div><b>Packet Lab</b>Built this page and checked its engine against 2,000 recorded packets: 2,000/2,000 match.</div></li>
+          <li class="fix" style="--i:7"><time>10 Nov</time><div><b>DNS guard on real traffic, and a crash found</b>A valid packet crashed the Rust ↔ C++ hand-off. Fixed with a lossy conversion and a regression test.</div></li>
+          <li class="fix" style="--i:8"><time>10 Nov</time><div><b>Tried to break it: a freeze found</b>Odd queries froze the server. Fixed: instant error replies, 16 workers, and 5 stuck lookups now answered together in 2.0 s.</div></li>
+          <li class="ship" style="--i:9"><time>10 Nov</time><div><b>Shipped</b>One-command self-check (4/4 PASS) and a live site at basti-on.vercel.app.</div></li>
+        </ol>
+      </div>
+
+      <div class="story-foot">
+        <a class="bevel" href="https://github.com/adisafairy/basti-on" target="_blank" rel="noopener">View the code</a>
+        <a class="ghost" href="https://github.com/adisafairy/basti-on/blob/main/docs/WRITEUP.md" target="_blank" rel="noopener">Full write-up</a>
+      </div>
+      <p class="story-note">All numbers are from measured runs on the dates shown; fuzz counts vary between runs.</p>
+    </section>
+  </div>
 
   <footer class="foot">
     <span class="logo"><span class="mark" aria-hidden="true"></span>Basti-on</span>
@@ -2295,6 +2418,48 @@ document.addEventListener("click", e => {
       setTimeout(() => window.__bootGone && window.__bootGone(), 1150);
     }, 650);
   }, wait);
+})();
+
+/* ---------- Build story ---------- */
+(() => {
+  const box = $("story"), panel = box.querySelector(".story-panel");
+  let opener = null;
+  const focusables = () => [...panel.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(n => n.offsetParent !== null);
+  function open(from) {
+    if (!box.hidden) return;
+    opener = from || document.activeElement;
+    box.hidden = false; box.classList.remove("closing"); box.classList.add("open");
+    document.documentElement.style.overflow = "hidden";
+    panel.scrollTop = 0;
+    $("story-h").focus({ preventScroll: true });
+    try { history.replaceState(null, "", "#story"); } catch (e) {}
+  }
+  function close() {
+    if (box.hidden) return;
+    const done = () => { box.hidden = true; box.classList.remove("open", "closing"); document.documentElement.style.overflow = ""; if (opener && opener.focus) opener.focus({ preventScroll: true }); };
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    if (reduced.matches) return done();
+    box.classList.add("closing"); setTimeout(done, 260);
+  }
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-story]"); if (t) { e.preventDefault(); open(t); return; }
+    if (e.target.closest("[data-story-close]")) close();
+  });
+  document.addEventListener("keydown", e => {
+    if (box.hidden) return;
+    if (e.key === "Escape") { e.preventDefault(); close(); return; }
+    if (e.key !== "Tab") return;
+    const f = focusables(); if (!f.length) return;
+    const first = f[0], lastF = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === $("story-h"))) { e.preventDefault(); lastF.focus(); }
+    else if (!e.shiftKey && document.activeElement === lastF) { e.preventDefault(); first.focus(); }
+  });
+  if (location.hash === "#story") {
+    const boot = $("boot");
+    const wait = boot && !boot.classList.contains("gone") ? 2600 : 0;
+    setTimeout(() => open(null), wait);
+  }
+  window.BuildStory = { open, close };
 })();
 </script>
 
