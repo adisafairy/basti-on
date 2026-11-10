@@ -1,0 +1,4 @@
+# Packet Lab is a single built page: its styles, scripts and 2,000 recorded
+# packets are bundled into one file. Keep it out of GitHub's language stats so
+# they reflect the Rust and C++ project, and collapse it in diffs.
+site/index.html linguist-generated=true
